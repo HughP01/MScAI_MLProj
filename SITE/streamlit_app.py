@@ -100,7 +100,7 @@ st.markdown(f"""
     
     /* Button styling for mobile */
     .stButton button {{
-        width: 100%;
+        width: 20%;
         border-radius: 12px;
         background: linear-gradient(45deg, #6e48aa, #9d50bb);
         color: white;
@@ -231,5 +231,3 @@ def main():
                     processed_image = preprocess_image(image)
                     prediction = model.predict(processed_image)
                     display_results(prediction)
-
-# [Rest of your existing functions...]
