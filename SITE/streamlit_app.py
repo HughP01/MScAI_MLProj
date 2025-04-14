@@ -65,18 +65,14 @@ def get_custom_css():
         border-radius: 50% !important;
     }}
 
-    .stButton button {{
-        width: auto !important;
-        min-width: 160px;
-        max-width: 100%;
-        padding: 0.6rem 1.2rem;
-        border-radius: 12px;
-        background: linear-gradient(45deg, #6e48aa, #9d50bb);
-        color: white;
-        font-weight: bold;
-        font-size: 1rem;
-        margin: 0.5rem auto;
-        display: block;
+    .stButton, .stButton>button {{
+        width: 50px !important;  /* Set width */
+        height: 50px !important;  /* Set height to match width */
+        padding: 0 !important;  /* Remove internal padding */
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        font-size: 1.2rem;  /* Adjust font size */
     }}
 
     /* Enhanced Tab container styling */
