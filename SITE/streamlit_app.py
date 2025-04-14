@@ -100,7 +100,7 @@ st.markdown(f"""
     
     /* Button styling for mobile */
     .stButton button {{
-        width: 20%;
+        width: 15%;
         border-radius: 12px;
         background: linear-gradient(45deg, #6e48aa, #9d50bb);
         color: white;
