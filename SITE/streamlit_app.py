@@ -8,8 +8,8 @@ from datetime import datetime
 
 # App configuration
 st.set_page_config(
-    page_title="Image Classifier",
-    page_icon="📱",
+    page_title="Traffic Sign Classifier",
+    page_icon="🤖",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -80,7 +80,7 @@ def preprocess_image(image):
 
 # Main app
 def main():
-    st.title("📱 AI Image Classifier")
+    st.title("Traffic Sign Detector")
     st.markdown("Upload an image or use your camera to get predictions")
     
     # Create tabs for different input methods
