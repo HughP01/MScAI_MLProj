@@ -26,88 +26,54 @@ def get_custom_css():
     <style>
     .stApp {{
         background: {'#121212' if st.session_state.theme == 'dark' else 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'} !important;
-        padding: 8px !important;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         color: {'white' if st.session_state.theme == 'dark' else 'black'} !important;
     }}
-    .stMarkdown, .stText, .stMetric {{ color: {'white' if st.session_state.theme == 'dark' else 'black'} !important; }}
-    .stTabs, .stCameraInput, .stFileUploader, .stButton, .stImage {{ width: 100% !important; max-width: 100% !important; }}
-    .st-emotion-cache-10trblm {{
-        color: {'#ffffff' if st.session_state.theme == 'dark' else '#2c3e50'} !important;
-        font-size: 1.8rem !important;
+
+    .stMarkdown h1, .st-emotion-cache-10trblm {{
+        font-size: clamp(1.5rem, 5vw, 2.2rem);
+        line-height: 1.2;
+        word-break: break-word;
         margin-bottom: 0.5rem;
+        color: {'white' if st.session_state.theme == 'dark' else '#2c3e50'} !important;
     }}
-    .stTabs [data-baseweb="tab-list"] {{
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-        gap: 4px;
+
+    button[data-testid="baseButton-secondary"] {{
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+        padding: 0 !important;
+        font-size: 1.2rem !important;
+        line-height: 1.2 !important;
+        margin-top: 0.5rem !important;
+        border-radius: 50% !important;
     }}
-    .stTabs [data-baseweb="tab"] {{
-        flex: 1;
-        padding: 0.5rem 0.3rem !important;
-        margin: 0 !important;
-        border-radius: 12px !important;
-        background: {'rgba(30,30,30,0.7)' if st.session_state.theme == 'dark' else 'rgba(255,255,255,0.7)'} !important;
-        font-size: 0.85rem !important;
-        min-width: auto !important;
-        color: {'white' if st.session_state.theme == 'dark' else 'black'} !important;
-    }}
-    .stTabs [aria-selected="true"] {{
-        background: {'#333333' if st.session_state.theme == 'dark' else 'white'} !important;
-        color: {'#9d50bb' if st.session_state.theme == 'dark' else '#6e48aa'} !important;
-        font-weight: bold;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }}
-    .stCameraInput > div, .stImage > div {{
-        border-radius: 12px !important;
-        overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        margin-bottom: 0.5rem;
-        background-color: {'#333333' if st.session_state.theme == 'dark' else 'white'} !important;
-    }}
+
     .stButton button {{
-        width: 100%;
+        width: auto !important;
+        min-width: 160px;
+        max-width: 100%;
+        padding: 0.6rem 1.2rem;
         border-radius: 12px;
         background: linear-gradient(45deg, #6e48aa, #9d50bb);
         color: white;
         font-weight: bold;
-        border: none;
-        padding: 0.7rem;
         font-size: 1rem;
-        margin: 0.5rem 0;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin: 0.5rem auto;
+        display: block;
     }}
-    .stButton button:active {{ transform: scale(0.98); }}
-    button[data-testid="baseButton-secondary"] {{
-        min-height: 2.5rem !important;
-        height: 2.5rem !important;
-        width: 2.5rem !important;
-        padding: 0 !important;
-        margin-top: 0.5rem !important;
-    }}
-    .prediction-box {{
-        border-radius: 12px;
-        padding: 12px;
-        background: {'rgba(30,30,30,0.95)' if st.session_state.theme == 'dark' else 'rgba(255,255,255,0.95)'} !important;
-        margin: 0.5rem 0;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        border: 1px solid {'rgba(255,255,255,0.1)' if st.session_state.theme == 'dark' else 'rgba(0,0,0,0.05)'} !important;
-        color: {'white' if st.session_state.theme == 'dark' else 'black'} !important;
-    }}
-    .stProgress > div > div > div {{
-        background: linear-gradient(90deg, #6e48aa, #9d50bb);
-        height: 0.5rem !important;
-        border-radius: 4px;
-    }}
-    .stMetric {{
-        background: {'rgba(30,30,30,0.8)' if st.session_state.theme == 'dark' else 'rgba(255,255,255,0.8)'} !important;
-        border-radius: 10px;
-        padding: 12px;
-        margin-bottom: 12px;
+
+    @media screen and (max-width: 480px) {{
+        .stMarkdown h1 {{
+            font-size: 1.4rem !important;
+        }}
+        .stButton button {{
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }}
     }}
     </style>
     """
+
 
 # Load a dummy model
 @st.cache_resource
