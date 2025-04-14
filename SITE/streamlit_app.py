@@ -75,7 +75,6 @@ def get_custom_css():
         font-size: 1.2rem;  /* Adjust font size */
         border-radius: 12px;  /* Rounded corners */
         background-color: {'#2c3e50' if st.session_state.theme == 'light' else '#1e1e1e'} !important;  /* Dark background for dark mode, light for light mode */
-        color: {'#ffffff' if st.session_state.theme == 'dark' else '#1e1e1e'} !important;  /* White icon for dark mode, dark icon for light mode */
     }}
 
     /* Enhanced Tab container styling */
