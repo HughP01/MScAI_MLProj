@@ -48,7 +48,7 @@ def get_custom_css():
 
     /* Title with dynamic font size */
     .stMarkdown h1, .st-emotion-cache-10trblm {{
-        font-size: clamp(1.5rem, 5vw, 2.2rem); /* Makes the font size responsive */
+        font-size: clamp(1.2rem, 4vw, 1.8rem); /* Smaller font size for better mobile fit */
         line-height: 1.2;
         word-break: break-word;
         margin-bottom: 0.5rem;
