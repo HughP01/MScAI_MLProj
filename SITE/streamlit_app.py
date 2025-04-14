@@ -10,69 +10,88 @@ from datetime import datetime
 st.set_page_config(
     page_title="Traffic Sign Classifier",
     page_icon="🚦",
-    layout="centered",  # Changed from "wide" to "centered" for better mobile display
+    layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# Mobile-optimized CSS with visual enhancements
-st.markdown("""
+# Initialize session state for theme if not already set
+if 'theme' not in st.session_state:
+    st.session_state.theme = 'light'
+
+# Function to toggle theme
+def toggle_theme():
+    if st.session_state.theme == 'light':
+        st.session_state.theme = 'dark'
+    else:
+        st.session_state.theme = 'light'
+
+# Mobile-optimized CSS with light/dark mode support
+st.markdown(f"""
     <style>
     /* Base mobile-friendly styles */
-    .stApp {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    .stApp {{
+        background: {'#121212' if st.session_state.theme == 'dark' else 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'} !important;
         padding: 8px !important;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
+        color: {'white' if st.session_state.theme == 'dark' else 'black'} !important;
+    }}
+    
+    /* Theme-aware text colors */
+    .stMarkdown, .stText, .stMetric, .stProgress .st-emotion-cache-1ru4j3m {{
+        color: {'white' if st.session_state.theme == 'dark' else 'black'} !important;
+    }}
     
     /* Full-width elements on mobile */
-    .stTabs, .stCameraInput, .stFileUploader, .stButton, .stImage {
+    .stTabs, .stCameraInput, .stFileUploader, .stButton, .stImage {{
         width: 100% !important;
         max-width: 100% !important;
-    }
+    }}
     
     /* Header styling for mobile */
-    .st-emotion-cache-10trblm {
-        color: #2c3e50;
+    .st-emotion-cache-10trblm {{
+        color: {'#ffffff' if st.session_state.theme == 'dark' else '#2c3e50'} !important;
         font-size: 1.8rem !important;
         margin-bottom: 0.5rem;
         text-align: center;
-    }
+    }}
     
     /* Tab styling for mobile */
-    .stTabs [data-baseweb="tab-list"] {
+    .stTabs [data-baseweb="tab-list"] {{
         display: flex;
         justify-content: space-between;
         margin-bottom: 0.5rem;
         gap: 4px;
-    }
+    }}
     
-    .stTabs [data-baseweb="tab"] {
+    .stTabs [data-baseweb="tab"] {{
         flex: 1;
         padding: 0.5rem 0.3rem !important;
         margin: 0 !important;
         border-radius: 12px !important;
-        background: rgba(255,255,255,0.7) !important;
+        background: {'rgba(30,30,30,0.7)' if st.session_state.theme == 'dark' else 'rgba(255,255,255,0.7)'} !important;
         font-size: 0.85rem !important;
         min-width: auto !important;
-    }
+        color: {'white' if st.session_state.theme == 'dark' else 'black'} !important;
+    }}
     
-    .stTabs [aria-selected="true"] {
-        background: white !important;
-        color: #6e48aa !important;
+    .stTabs [aria-selected="true"] {{
+        background: {'#333333' if st.session_state.theme == 'dark' else 'white'} !important;
+        color: {'#9d50bb' if st.session_state.theme == 'dark' else '#6e48aa'} !important;
         font-weight: bold;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+    }}
     
     /* Camera and image styling */
-    .stCameraInput > div, .stImage > div {
+    .stCameraInput > div, .stImage > div {{
         border-radius: 12px !important;
         overflow: hidden;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         margin-bottom: 0.5rem;
-    }
+        background-color: {'#333333' if st.session_state.theme == 'dark' else 'white'} !important;
+    }}
     
     /* Button styling for mobile */
-    .stButton button {
+    .stButton button {{
         width: 100%;
         border-radius: 12px;
         background: linear-gradient(45deg, #6e48aa, #9d50bb);
@@ -83,70 +102,111 @@ st.markdown("""
         font-size: 1rem;
         margin: 0.5rem 0;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
+    }}
     
-    .stButton button:active {
+    .stButton button:active {{
         transform: scale(0.98);
-    }
+    }}
     
-    /* Prediction box for mobile */
-    .prediction-box {
+    /* Theme toggle button */
+    .theme-toggle {{
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+        background: {'#333333' if st.session_state.theme == 'dark' else 'white'} !important;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        border: none;
+        color: {'white' if st.session_state.theme == 'dark' else 'black'};
+    }}
+    
+    /* Prediction box */
+    .prediction-box {{
         border-radius: 12px;
         padding: 12px;
-        background: rgba(255,255,255,0.95);
+        background: {'rgba(30,30,30,0.95)' if st.session_state.theme == 'dark' else 'rgba(255,255,255,0.95)'} !important;
         margin: 0.5rem 0;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        border: 1px solid rgba(0,0,0,0.05);
-    }
+        border: 1px solid {'rgba(255,255,255,0.1)' if st.session_state.theme == 'dark' else 'rgba(0,0,0,0.05)'} !important;
+        color: {'white' if st.session_state.theme == 'dark' else 'black'} !important;
+    }}
     
     /* Progress bar styling */
-    .stProgress > div > div > div {
+    .stProgress > div > div > div {{
         background: linear-gradient(90deg, #6e48aa, #9d50bb);
         height: 0.5rem !important;
         border-radius: 4px;
-    }
+    }}
     
     /* Metric styling for mobile */
-    .stMetric {
-        background: rgba(255,255,255,0.8);
+    .stMetric {{
+        background: {'rgba(30,30,30,0.8)' if st.session_state.theme == 'dark' else 'rgba(255,255,255,0.8)'} !important;
         border-radius: 10px;
         padding: 12px;
         margin-bottom: 12px;
-    }
+    }}
     
     /* Hide unnecessary elements on mobile */
-    @media (max-width: 768px) {
+    @media (max-width: 768px) {{
         /* Remove extra padding */
-        .main > div {
+        .main > div {{
             padding: 0.5rem !important;
-        }
+        }}
         
         /* Make text more readable */
-        .stMarkdown p, .stMarkdown li {
+        .stMarkdown p, .stMarkdown li {{
             font-size: 0.9rem !important;
             line-height: 1.4 !important;
-        }
+        }}
         
         /* Adjust progress bar labels */
-        .stProgress .st-emotion-cache-1ru4j3m {
+        .stProgress .st-emotion-cache-1ru4j3m {{
             font-size: 0.8rem !important;
-        }
-    }
+        }}
+    }}
     
     /* Very small devices adjustments */
-    @media (max-width: 400px) {
-        .stTabs [data-baseweb="tab"] {
+    @media (max-width: 400px) {{
+        .stTabs [data-baseweb="tab"] {{
             font-size: 0.75rem !important;
             padding: 0.4rem 0.2rem !important;
-        }
+        }}
         
-        .stButton button {
+        .stButton button {{
             padding: 0.6rem;
             font-size: 0.9rem;
-        }
-    }
+        }}
+        
+        .theme-toggle {{
+            width: 35px;
+            height: 35px;
+            top: 5px;
+            right: 5px;
+        }}
+    }}
     </style>
 """, unsafe_allow_html=True)
+
+# Add theme toggle button
+st.markdown(
+    f"""
+    <button class="theme-toggle" onclick="toggleTheme()">
+        {'🌙' if st.session_state.theme == 'light' else '☀️'}
+    </button>
+    <script>
+    function toggleTheme() {{
+        parent.window.postMessage({{"theme": "toggle"}}, "*");
+    }}
+    </script>
+    """,
+    unsafe_allow_html=True
+)
 
 # Load model function with caching
 @st.cache_resource
@@ -236,9 +296,9 @@ def display_results(prediction):
     confidence = tf.nn.softmax(prediction[0])
     top_idx = np.argmax(confidence)
     
-    st.markdown("""
+    st.markdown(f"""
     <div class="prediction-box">
-        <h3 style="color: #2c3e50; text-align: center;">Results</h3>
+        <h3 style="color: {'#ffffff' if st.session_state.theme == 'dark' else '#2c3e50'}; text-align: center;">Results</h3>
     """, unsafe_allow_html=True)
     
     # Top prediction - mobile optimized
@@ -253,6 +313,18 @@ def display_results(prediction):
             st.progress(float(conf), text=f"{name}: {conf*100:.1f}%")
     
     st.markdown("</div>", unsafe_allow_html=True)
+
+# Handle theme toggling from JavaScript
+def handle_theme_toggle():
+    if st.session_state.theme == 'light':
+        st.session_state.theme = 'dark'
+    else:
+        st.session_state.theme = 'light'
+    st.rerun()
+
+# Listen for theme toggle messages from JavaScript
+if 'theme' in st.query_params and st.query_params['theme'] == 'toggle':
+    handle_theme_toggle()
 
 if __name__ == "__main__":
     main()
