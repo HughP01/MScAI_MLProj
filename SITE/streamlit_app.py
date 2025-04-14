@@ -61,7 +61,33 @@ def get_custom_css():
         margin: 0.5rem auto;
         display: block;
     }}
+        /* Tab container styling */
+.stTabs [data-baseweb="tab-list"] {
+    background-color: transparent;
+    padding: 0.2rem;
+    border-radius: 10px;
+}
 
+/* Individual tab styles */
+.stTabs [data-baseweb="tab"] {
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    color: {'#ffffff' if st.session_state.theme == 'dark' else '#333333'} !important;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Active tab */
+.stTabs [aria-selected="true"] {
+    background: {'#9d50bb' if st.session_state.theme == 'dark' else '#6e48aa'};
+    color: white !important;
+    border-color: white;
+    font-weight: bold;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
     @media screen and (max-width: 480px) {{
         .stMarkdown h1 {{
             font-size: 1.4rem !important;
