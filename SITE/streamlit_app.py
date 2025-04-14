@@ -3,7 +3,7 @@ import tensorflow as tf
 from PIL import Image
 import numpy as np
 
-# App configuration
+# App configuration - optimized for mobile
 st.set_page_config(
     page_title="Traffic Sign Classifier",
     page_icon="🚦",
@@ -11,16 +11,32 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Initialize theme
+# Initialize session state for theme if not already set
 if 'theme' not in st.session_state:
     st.session_state.theme = 'light'
 
-# Toggle theme
+# Function to toggle theme
 def toggle_theme():
-    st.session_state.theme = 'dark' if st.session_state.theme == 'light' else 'light'
+    if st.session_state.theme == 'light':
+        st.session_state.theme = 'dark'
+    else:
+        st.session_state.theme = 'light'
     st.rerun()
 
-# CSS styling in a function
+# Add header with theme toggle
+col1, col2 = st.columns([4, 1])
+with col1:
+    st.title("🚦 Traffic Sign Detector")
+with col2:
+    # Display the theme toggle button
+    if st.session_state.theme == 'light':
+        st.button('🌙', on_click=toggle_theme, help="Switch to dark mode", 
+                 key='theme_toggle', use_container_width=True)
+    else:
+        st.button('☀️', on_click=toggle_theme, help="Switch to light mode",
+                 key='theme_toggle', use_container_width=True)
+
+# Mobile-optimized CSS with light/dark mode support
 def get_custom_css():
     return f"""
     <style>
@@ -61,33 +77,40 @@ def get_custom_css():
         margin: 0.5rem auto;
         display: block;
     }}
-        /* Tab container styling */
-.stTabs [data-baseweb="tab-list"] {
-    background-color: transparent;
-    padding: 0.2rem;
-    border-radius: 10px;
-}
 
-/* Individual tab styles */
-.stTabs [data-baseweb="tab"] {
-    background: rgba(255, 255, 255, 0.3);
-    border: 2px solid transparent;
-    border-radius: 12px;
-    color: {'#ffffff' if st.session_state.theme == 'dark' else '#333333'} !important;
-    font-weight: 600;
-    transition: all 0.2s ease-in-out;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
+    /* Enhanced Tab container styling */
+    .stTabs [data-baseweb="tab-list"] {{
+        background-color: transparent;
+        padding: 0.2rem;
+        border-radius: 10px;
+        gap: 0.5rem;
+        display: flex;
+        justify-content: space-evenly;
+    }}
 
-/* Active tab */
-.stTabs [aria-selected="true"] {
-    background: {'#9d50bb' if st.session_state.theme == 'dark' else '#6e48aa'};
-    color: white !important;
-    border-color: white;
-    font-weight: bold;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-}
+    /* Individual tab styles for visibility */
+    .stTabs [data-baseweb="tab"] {{
+        background: rgba(255, 255, 255, 0.3);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        color: {'#ffffff' if st.session_state.theme == 'dark' else '#333333'} !important;
+        font-weight: 600;
+        transition: all 0.2s ease-in-out;
+        backdrop-filter: blur(4px);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        padding: 0.5rem 1rem !important;
+        font-size: 0.9rem;
+    }}
+
+    /* Active tab styling */
+    .stTabs [aria-selected="true"] {{
+        background: {'#9d50bb' if st.session_state.theme == 'dark' else '#6e48aa'};
+        color: white !important;
+        border-color: white;
+        font-weight: bold;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }}
+
     @media screen and (max-width: 480px) {{
         .stMarkdown h1 {{
             font-size: 1.4rem !important;
@@ -100,10 +123,13 @@ def get_custom_css():
     </style>
     """
 
+# Inject custom CSS
+st.markdown(get_custom_css(), unsafe_allow_html=True)
 
-# Load a dummy model
+# Load model function with caching
 @st.cache_resource
 def load_model():
+    # Replace with your actual model loading code
     model = tf.keras.Sequential([
         tf.keras.layers.Flatten(input_shape=(224, 224, 3)),
         tf.keras.layers.Dense(128, activation='relu'),
@@ -116,81 +142,94 @@ def load_model():
 
 model = load_model()
 
-# Preprocess image
+# Image preprocessing
 def preprocess_image(image):
     image = image.resize((48, 48))
     image = np.array(image)
     if image.shape[-1] == 4:
         image = image[..., :3]
     image = image / 255.0
-    return np.expand_dims(image, axis=0)
+    image = np.expand_dims(image, axis=0)
+    return image
 
-# Show prediction results
 def display_results(prediction):
     class_names = {
         0: "Speed limit (20km/h)", 1: "Speed limit (30km/h)", 2: "Speed limit (50km/h)",
         3: "Speed limit (60km/h)", 4: "Speed limit (70km/h)", 5: "Speed limit (80km/h)",
         6: "End of speed limit (80km/h)", 7: "Speed limit (100km/h)", 8: "Speed limit (120km/h)",
-        9: "No passing"
+        9: "No passing", 10: "No passing for vehicles over 3.5 metric tons",
+        11: "Right-of-way at the next intersection", 12: "Priority road", 13: "Yield",
+        14: "Stop", 15: "No vehicles", 16: "Vehicles over 3.5 metric tons prohibited",
+        17: "No entry", 18: "General caution", 19: "Dangerous curve to the left",
+        20: "Dangerous curve to the right", 21: "Double curve", 22: "Bumpy road",
+        23: "Slippery road", 24: "Road narrows on the right", 25: "Road work",
+        26: "Traffic signals", 27: "Pedestrians", 28: "Children crossing",
+        29: "Bicycles crossing", 30: "Beware of ice/snow", 31: "Wild animals crossing",
+        32: "End of all speed and passing limits", 33: "Turn right ahead",
+        34: "Turn left ahead", 35: "Ahead only", 36: "Go straight or right",
+        37: "Go straight or left", 38: "Keep right", 39: "Keep left",
+        40: "Roundabout mandatory", 41: "End of no passing",
+        42: "End of no passing for vehicles over 3.5 metric tons"
     }
+
     confidence = tf.nn.softmax(prediction[0])
     top_idx = np.argmax(confidence)
 
     st.markdown(f"""
     <div class="prediction-box">
-        <h3 style="text-align: center;">Results</h3>
+        <h3 style="color: {'#ffffff' if st.session_state.theme == 'dark' else '#2c3e50'}; text-align: center;">Results</h3>
     """, unsafe_allow_html=True)
 
-    st.metric(label="Most Likely", value=class_names[top_idx], delta=f"{confidence[top_idx]*100:.1f}%")
-
+    # Top prediction - mobile optimized
+    st.metric(label="Most Likely", 
+              value=class_names[top_idx],
+              delta=f"{confidence[top_idx]*100:.1f}%")
+    
+    # All classes with compact display
     st.subheader("All probabilities:")
-    for i, (name, conf) in enumerate(zip(class_names.values(), confidence)):
-        if conf > 0.01:
+    for i, (name, conf) in enumerate(zip(class_names, confidence)):
+        if conf > 0.01:  # Only show significant probabilities
             st.progress(float(conf), text=f"{name}: {conf*100:.1f}%")
-
+    
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Main app layout
+# Main app function
 def main():
-    # Header
-    col1, col2 = st.columns([4, 1])
-    with col1:
-        st.title("🚦 Traffic Sign Detector")
-    with col2:
-        icon = '🌙' if st.session_state.theme == 'light' else '☀️'
-        label = 'Switch to dark mode' if st.session_state.theme == 'light' else 'Switch to light mode'
-        st.button(icon, on_click=toggle_theme, help=label, key='theme_toggle', use_container_width=True)
-
-    # Apply CSS
-    st.markdown(get_custom_css(), unsafe_allow_html=True)
-
     st.markdown("Snap or upload a photo of a traffic sign to identify it")
-
+    
+    # Create tabs for different input methods
     tab1, tab2 = st.tabs(["📁 Upload", "📷 Camera"])
-
+    
     with tab1:
-        uploaded_file = st.file_uploader("Choose an image", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+        uploaded_file = st.file_uploader(
+            "Choose an image", 
+            type=["jpg", "png", "jpeg"],
+            label_visibility="collapsed"
+        )
+        
         if uploaded_file is not None:
             image = Image.open(uploaded_file)
             st.image(image, caption='Uploaded Image', use_column_width=True)
+            
             if st.button("Analyze Image"):
                 with st.spinner('Processing...'):
-                    processed = preprocess_image(image)
-                    prediction = model.predict(processed)
+                    processed_image = preprocess_image(image)
+                    prediction = model.predict(processed_image)
                     display_results(prediction)
-
+    
     with tab2:
         st.write("Center the sign and tap the button below")
-        img_buffer = st.camera_input("Take a picture", label_visibility="collapsed")
-        if img_buffer is not None:
-            image = Image.open(img_buffer)
+        img_file_buffer = st.camera_input("Take a picture", label_visibility="collapsed")
+        
+        if img_file_buffer is not None:
+            image = Image.open(img_file_buffer)
             st.image(image, caption='Captured Image', use_column_width=True)
+            
             if st.button("Analyze Photo"):
                 with st.spinner('Processing...'):
-                    processed = preprocess_image(image)
-                    prediction = model.predict(processed)
+                    processed_image = preprocess_image(image)
+                    prediction = model.predict(processed_image)
                     display_results(prediction)
 
-# Run the app
 if __name__ == "__main__":
     main()
