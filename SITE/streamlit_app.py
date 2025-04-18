@@ -128,22 +128,13 @@ st.markdown(get_custom_css(), unsafe_allow_html=True)
 # Load model function with caching
 @st.cache_resource
 def load_model():
-    # Replace with your actual model loading code
-    model = tf.keras.Sequential([
-        tf.keras.layers.Flatten(input_shape=(224, 224, 3)),
-        tf.keras.layers.Dense(128, activation='relu'),
-        tf.keras.layers.Dense(10)
-    ])
-    model.compile(optimizer='adam',
-                  loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                  metrics=['accuracy'])
-    return model
+    return tf.keras.models.load_model("models/traffic_sign_cnn.h5")
 
 model = load_model()
 
 # Image preprocessing
 def preprocess_image(image):
-    image = image.resize((48, 48))
+    image = image.resize((32, 32))
     image = np.array(image)
     if image.shape[-1] == 4:
         image = image[..., :3]
