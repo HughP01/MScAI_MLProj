@@ -128,8 +128,7 @@ st.markdown(get_custom_css(), unsafe_allow_html=True)
 # Load model function with caching
 @st.cache_resource
 def load_model():
-    return tf.keras.models.load_model("traffic_sign_cnn.h5")
-
+    return tf.keras.models.load_model("SITE/traffic_sign_cnn.h5")
 model = load_model()
 
 # Image preprocessing
