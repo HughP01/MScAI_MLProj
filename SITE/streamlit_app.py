@@ -176,9 +176,9 @@ def display_results(prediction):
     
     # All classes with compact display
     st.subheader("All probabilities:")
-    for i, (name, conf) in enumerate(zip(class_names, confidence)):
-        if conf > 0.01:  # Only show significant probabilities
-            st.progress(float(conf), text=f"{name}: {conf*100:.1f}%")
+    top_preds = sorted([(i, conf) for i, conf in enumerate(confidence) if conf > 0.01], key=lambda x: x[1], reverse=True)
+    for idx, conf in top_preds:
+        st.progress(float(conf), text=f"{class_names[idx]}: {conf*100:.1f}%")
     
     st.markdown("</div>", unsafe_allow_html=True)
 
