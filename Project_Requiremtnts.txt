@@ -1,0 +1,15 @@
+numpy
+pandas
+opencv-python
+scikit-image
+matplotlib
+seaborn
+scikit-learn
+joblib
+tensorflow 2.10
+torch
+
+This project was done on a windows 10 pc with:
+Python vers. 3.10.11 | packaged by Anaconda, Inc. | (main, May 16 2023, 00:55:32) [MSC v.1916 64 bit (AMD64)]
+Nividia CUDA Toolkit Vers. 11.8.0
+Visual Studio 2019 v16.11.45
