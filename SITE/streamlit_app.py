@@ -134,13 +134,13 @@ model = load_model()
 
 # Image preprocessing
 def preprocess_image(image):
-    image = image.resize((32, 32))
+    image = image.resize((32, 32)) 
     image = np.array(image)
     if image.shape[-1] == 4:
-        image = image[..., :3]
+        image = image[..., :3]  
     image = image / 255.0
-    image = np.expand_dims(image, axis=0)
-    return image
+    return np.expand_dims(image, axis=0)
+
 
 def display_results(prediction):
     class_names = {
