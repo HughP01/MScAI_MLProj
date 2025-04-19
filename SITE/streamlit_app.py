@@ -163,11 +163,10 @@ def display_results(prediction):
     confidence = tf.nn.softmax(prediction[0]).numpy()
     top_preds = sorted([(i, conf) for i, conf in enumerate(confidence)], key=lambda x: x[1], reverse=True)[:3]
 
-    # Normalize top 3 confidences
+    #Normalize top 3 confidences
     total = sum(conf for _, conf in top_preds)
-    normalized_preds = [(i, (conf / total)) for i, conf in top_preds]
+    normalized_preds = [(i, float(conf / total)) for i, conf in top_preds]  # casting to float here
 
-    # Display top prediction
     st.markdown(f"""
     <div class="prediction-box">
         <h3 style="color: {'#ffffff' if st.session_state.theme == 'dark' else '#2c3e50'}; text-align: center;">Top 3 Predictions</h3>
@@ -179,7 +178,7 @@ def display_results(prediction):
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-    # Top prediction - mobile optimized
+    #Top prediction - mobile optimized
     st.metric(label="Most Likely", 
               value=class_names[top_idx],
               delta=f"{confidence[top_idx]*100:.1f}%")
