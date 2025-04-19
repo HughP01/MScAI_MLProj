@@ -137,7 +137,6 @@ def preprocess_image(image):
     image = np.array(image)
     if image.shape[-1] == 4:
         image = image[..., :3]  
-    image = image / 255.0
     return np.expand_dims(image, axis=0)
 
 
