@@ -160,13 +160,24 @@ def display_results(prediction):
         42: "End of no passing for vehicles over 3.5 metric tons"
     }
 
-    confidence = tf.nn.softmax(prediction[0])
-    top_idx = np.argmax(confidence)
+    confidence = tf.nn.softmax(prediction[0]).numpy()
+    top_preds = sorted([(i, conf) for i, conf in enumerate(confidence)], key=lambda x: x[1], reverse=True)[:3]
 
+    # Normalize top 3 confidences
+    total = sum(conf for _, conf in top_preds)
+    normalized_preds = [(i, (conf / total)) for i, conf in top_preds]
+
+    # Display top prediction
     st.markdown(f"""
     <div class="prediction-box">
-        <h3 style="color: {'#ffffff' if st.session_state.theme == 'dark' else '#2c3e50'}; text-align: center;">Results</h3>
+        <h3 style="color: {'#ffffff' if st.session_state.theme == 'dark' else '#2c3e50'}; text-align: center;">Top 3 Predictions</h3>
     """, unsafe_allow_html=True)
+
+    for idx, norm_conf in normalized_preds:
+        st.progress(norm_conf, text=f"{class_names[idx]}: {norm_conf * 100:.1f}%")
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+
 
     # Top prediction - mobile optimized
     st.metric(label="Most Likely", 
