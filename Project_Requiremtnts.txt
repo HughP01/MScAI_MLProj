@@ -8,6 +8,7 @@ scikit-learn
 joblib
 tensorflow 2.10
 torch
+codecarbon
 
 This project was done on a windows 10 pc with:
 Python vers. 3.10.11 | packaged by Anaconda, Inc. | (main, May 16 2023, 00:55:32) [MSC v.1916 64 bit (AMD64)]
